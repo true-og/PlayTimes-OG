@@ -5,6 +5,7 @@ author: Cmaaxx
 authors: [CodedRed]
 softdepend: [PlaceholderAPI]
 description: Check Players PlayTime And More!
+api-version: 1.19
 
 commands:
   playtime:
