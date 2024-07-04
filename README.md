@@ -1,6 +1,6 @@
 # PlayTimes-OG
 
-A fork of PlayTimes, the best /playtime plugin! MMAPI support, offline checks, API & more maintained by [TrueOG Network](https://true-og.net/).
+A fork of PlayTimes, the best /playtime plugin! MMPAPI support, offline checks, API & more maintained by [TrueOG Network](https://true-og.net/).
 
 ## Table of Contents
 - [About The Project](#about-the-project)
