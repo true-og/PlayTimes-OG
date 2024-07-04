@@ -74,20 +74,11 @@ public class TopTime implements CommandExecutor {
     );
     String content = data.getConfig().getString("top-playtime.content");
 
-    if (ServerUtils.hasPAPI()) {
-      header = PAPIHolders.getHolders((Player) sender, header);
-      footer = PAPIHolders.getHolders((Player) sender, footer);
-    }
-
     sender.sendMessage(header);
 
     for (int i = 0; i < map.size(); i++) {
       UUID uuid = UUID.fromString(map.keySet().toArray()[i].toString());
       org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-
-      if (ServerUtils.hasPAPI()) {
-        content = PAPIHolders.getHolders(offlinePlayer, content);
-      }
 
       String defaultPlayerName = "Unknown";
       String defaultJoinDate = "N/A";

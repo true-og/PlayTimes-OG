@@ -36,13 +36,6 @@ public class PlayTimes extends JavaPlugin {
     TimeManager.getInstance().registerTimings();
 
     loadDatabase();
-
-    if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-      Expansions exp = new Expansions();
-      exp.register();
-      getLogger().info("PlaceholdersAPI Hooked!");
-    }
-
     registerEvents();
     registerCommands();
 

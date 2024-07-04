@@ -10,7 +10,6 @@ import me.codedred.playtimes.statistics.StatManager;
 import me.codedred.playtimes.statistics.StatisticType;
 import me.codedred.playtimes.time.TimeManager;
 import me.codedred.playtimes.utils.ChatUtil;
-import me.codedred.playtimes.utils.PAPIHolders;
 import me.codedred.playtimes.utils.ServerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -68,32 +67,11 @@ public class Message {
       dbManager.updatePlaytime(targetUUID, rawTime / 20, afkTime);
     }
 
-    if (ServerUtils.hasPAPI()) {
-      builtMessage = applyPAPIPlaceholders(builtMessage);
-    }
-
     return processMessageWithReplacements(
       builtMessage,
       prepareReplacements(rawTime, afkTime)
     );
   }
-
-  /**
-   * Applies PlaceholderAPI placeholders to the message if available.
-   *
-   * @param message The message list to process.
-   * @return A list of messages with placeholders applied.
-   */
-  private List<String> applyPAPIPlaceholders(List<String> message) {
-    List<String> papiMessage = new ArrayList<>();
-    for (String msg : message) {
-      papiMessage.add(
-        PAPIHolders.getHolders(Bukkit.getOfflinePlayer(targetUUID), msg)
-      );
-    }
-    return papiMessage;
-  }
-
   /**
    * Prepares a map of replacements to be used in the message.
    *

@@ -44,6 +44,10 @@ public class DatabaseManager {
     return instance;
   }
 
+  public DataSource getDataSource() {
+    return this.dataSource;
+  }
+
   private void setupDataSource() {
     String type = DataManager
       .getInstance()

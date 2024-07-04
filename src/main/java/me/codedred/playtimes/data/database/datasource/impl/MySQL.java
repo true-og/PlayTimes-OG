@@ -3,11 +3,11 @@ package me.codedred.playtimes.data.database.datasource.impl;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import lombok.val;
 import me.codedred.playtimes.PlayTimes;
 import me.codedred.playtimes.data.DataManager;
 import me.codedred.playtimes.data.database.datasource.DataSource;
-
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 public class MySQL implements DataSource {
 
   private final String connectionUrl;
@@ -15,16 +15,16 @@ public class MySQL implements DataSource {
   private final String password;
 
   public MySQL(PlayTimes plugin) {
-    val config = DataManager
+    var config = DataManager
       .getInstance()
       .getDBConfig()
       .getConfigurationSection("database-settings");
-    val host = config.getString("host");
-    val port = config.getString("port");
+    String host = config.getString("host");
+    String port = config.getString("port");
     this.user = config.getString("user");
     this.password = config.getString("password");
-    val database = config.getString("database");
-    val SSL = config.getBoolean("useSSL");
+    String database = config.getString("database");
+    boolean SSL = config.getBoolean("useSSL");
 
     this.connectionUrl =
       String.format(
