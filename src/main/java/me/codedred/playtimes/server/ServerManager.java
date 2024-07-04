@@ -36,11 +36,11 @@ public class ServerManager {
   }
 
   public UUID getUUID(String name) {
-    return getStatus().getUUID(name);
+    return Bukkit.getPlayer(name).getUniqueId();
   }
 
   public String getName(UUID uuid) throws IOException {
-    return getStatus().getName(uuid);
+    return Bukkit.getPlayer(uuid).getName();
   }
 
   public boolean isOnline() {
