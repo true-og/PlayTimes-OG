@@ -1,8 +1,8 @@
-
 pluginManagement {
     repositories {
         mavenLocal()
         gradlePluginPortal()
     }
 }
-rootProject.name = 'PlayTimes'
+
+rootProject.name = "PlayTimes-OG"
