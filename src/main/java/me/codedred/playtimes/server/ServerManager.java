@@ -2,8 +2,12 @@ package me.codedred.playtimes.server;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import me.codedred.playtimes.data.DataManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class ServerManager {
 
@@ -35,8 +39,11 @@ public class ServerManager {
     return status;
   }
 
+  @Nullable
   public UUID getUUID(String name) {
-    return Bukkit.getPlayer(name).getUniqueId();
+    Player p = Bukkit.getPlayer(name);
+    if (p == null) return null;
+    else return p.getUniqueId();
   }
 
   public String getName(UUID uuid) throws IOException {
