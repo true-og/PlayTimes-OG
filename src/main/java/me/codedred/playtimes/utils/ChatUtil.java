@@ -1,57 +1,50 @@
 package me.codedred.playtimes.utils;
 
-import me.codedred.playtimes.data.DataManager;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import me.codedred.playtimes.data.DataManager;
+import net.kyori.adventure.text.TextComponent;
 
 public class ChatUtil {
 
-  private static final DataManager DATA_MANAGER = DataManager.getInstance();
-  private static final boolean IS_NEWER_VERSION = ServerUtils.isNewerVersion();
+	private static final DataManager DATA_MANAGER = DataManager.getInstance();
 
-  public enum ChatTypes {
-    NO_PERMISSION,
-    PLAYER_NOT_FOUND,
-    PLAYER_NEVER_PLAYED,
-  }
+	public enum ChatTypes {
+		NO_PERMISSION,
+		PLAYER_NOT_FOUND,
+		PLAYER_NEVER_PLAYED,
+	}
 
-  public static void errno(CommandSender sender, ChatTypes type) {
-    switch (type) {
-      case NO_PERMISSION:
-        sender.sendMessage(
-          format(DATA_MANAGER.getConfig().getString("messages.noPermission"))
-        );
-        break;
-      case PLAYER_NOT_FOUND:
-        sender.sendMessage(
-          formatWithPrefix(
-            DATA_MANAGER.getConfig().getString("messages.player-not-found")
-          )
-        );
-        break;
-      case PLAYER_NEVER_PLAYED:
-        sender.sendMessage(
-          formatWithPrefix(
-            DATA_MANAGER.getConfig().getString("messages.player-never-joined")
-          )
-        );
-        break;
-    }
-  }
+	public static void errno(CommandSender sender, ChatTypes type) {
+		switch (type) {
+		case NO_PERMISSION:
+			sender.sendMessage(
+					format(DATA_MANAGER.getConfig().getString("messages.noPermission"))
+					);
+			break;
+		case PLAYER_NOT_FOUND:
+			sender.sendMessage(
+					formatWithPrefix(
+							DATA_MANAGER.getConfig().getString("messages.player-not-found")
+							)
+					);
+			break;
+		case PLAYER_NEVER_PLAYED:
+			sender.sendMessage(
+					formatWithPrefix(
+							DATA_MANAGER.getConfig().getString("messages.player-never-joined")
+							)
+					);
+			break;
+		}
+	}
 
-  public static String format(String msg) {
-    msg = ChatColor.translateAlternateColorCodes('&', msg);
-    if (IS_NEWER_VERSION) msg = HexUtil.hex(msg);
-    return msg;
-  }
+	public static TextComponent format(String msg) {
+		return OGUtils.legacySerializerAnyCase(msg);
+	}
 
-  public static String formatWithPrefix(String msg) {
-    msg =
-      ChatColor.translateAlternateColorCodes(
-        '&',
-        DATA_MANAGER.getConfig().getString("prefix") + " " + msg
-      );
-    if (IS_NEWER_VERSION) msg = HexUtil.hex(msg);
-    return msg;
-  }
+	public static TextComponent formatWithPrefix(String msg) {
+		return OGUtils.legacySerializerAnyCase(DATA_MANAGER.getConfig().getString("prefix") + msg);
+	}
+
 }
