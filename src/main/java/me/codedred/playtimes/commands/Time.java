@@ -114,9 +114,6 @@ public class Time implements CommandExecutor {
 			ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
 			return;
 		}
-		boolean isOnline = ServerManager.getInstance().isOnline();
-		String serverStatus = isOnline ? "Online" : "Offline";
-
 		sender.sendMessage(ChatUtil.format("&6&l*** PlayTimes Version Info ***"));
 		if (sender instanceof Player) {
 			OGUtils.playTimesOGMessage((Player) sender,
@@ -133,27 +130,19 @@ public class Time implements CommandExecutor {
 							"&f" +
 							StatManager.getInstance().name +
 							"&6" +
-							"\nServer Status: " +
-							"&f" +
-							serverStatus +
-							"&6" +
 							"\nDatabase connected: " +
 							"&f" +
 							DataManager.getInstance().hasDatabase() +
 							"&6" +
 							"\nAFK Status: " +
 							"&f" +
-							DataManager.getInstance().hasAfkEnabled() +
-							"&6" +
-							"\nUUID Lookup Type: " +
-							"&f" +
-							ServerManager.getInstance().lookupType()
+							DataManager.getInstance().hasAfkEnabled()
 					);
 		}
 		else {
 			Logger logger = Bukkit.getServer().getLogger();
 			logger.info(OGUtils.legacySerializerAnyCase(
-					"&6" +
+					    "&6" +
 							"Server version: " +
 							"&f" +
 							Bukkit.getServer().getVersion() +
@@ -166,21 +155,13 @@ public class Time implements CommandExecutor {
 							"&f" +
 							StatManager.getInstance().name +
 							"&6" +
-							"\nServer Status: " +
-							"&f" +
-							serverStatus +
-							"&6" +
 							"\nDatabase connected: " +
 							"&f" +
 							DataManager.getInstance().hasDatabase() +
 							"&6" +
 							"\nAFK Status: " +
 							"&f" +
-							DataManager.getInstance().hasAfkEnabled() +
-							"&6" +
-							"\nUUID Lookup Type: " +
-							"&f" +
-							ServerManager.getInstance().lookupType()
+							DataManager.getInstance().hasAfkEnabled()	
 					).content());
 
 		}
