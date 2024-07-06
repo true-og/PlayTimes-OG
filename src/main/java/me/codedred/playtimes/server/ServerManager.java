@@ -1,102 +1,36 @@
 package me.codedred.playtimes.server;
-
-import java.io.IOException;
 import java.util.UUID;
-
 import javax.annotation.Nullable;
-
-import me.codedred.playtimes.data.DataManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 public class ServerManager {
 
   private static final ServerManager instance = new ServerManager();
 
-  public enum LookUpTypes {
-    OFFLINE,
-    ONLINE,
-  }
-
   public static ServerManager getInstance() {
     return instance;
   }
 
-  private ServerStatus status;
-  private LookUpTypes lookupType = LookUpTypes.ONLINE;
-
-  public void register() {
-    if (Bukkit.getOnlineMode()) {
-      status = new ServerOnline();
+  @Nullable
+  public UUID getUUID(String name) {
+    if(Bukkit.getPlayer(name) != null) {
+      return Bukkit.getPlayer(name).getUniqueId();
+    } else if(Bukkit.getOfflinePlayer(name) != null) {
+      return Bukkit.getOfflinePlayer(name).getUniqueId();
     } else {
-      status = new ServerOffline();
+      return null;
     }
-    cleanLeaderboard();
-    updateLookupType();
-  }
-
-  public ServerStatus getStatus() {
-    return status;
   }
 
   @Nullable
-  public UUID getUUID(String name) {
-    Player p = Bukkit.getPlayer(name);
-    if (p == null) return null;
-    else return p.getUniqueId();
-  }
-
-  public String getName(UUID uuid) throws IOException {
-    return Bukkit.getPlayer(uuid).getName();
-  }
-
-  public boolean isOnline() {
-    return getStatus().isOnline();
-  }
-
-  public LookUpTypes lookupType() {
-    return lookupType;
-  }
-
-  public void updateLookupType() {
-    DataManager dataManager = DataManager.getInstance();
-    boolean databaseEnabled = dataManager
-      .getDBConfig()
-      .getBoolean("database-settings.enabled");
-
-    boolean isSetToOffline = dataManager
-      .getConfig()
-      .getString("uuid-lookups.type")
-      .equalsIgnoreCase("offline");
-
-    boolean isSetToOnline = dataManager
-      .getConfig()
-      .getString("uuid-lookups.type")
-      .equalsIgnoreCase("online");
-
-    boolean serverOnline = isOnline();
-
-    if (isSetToOnline) lookupType = LookUpTypes.ONLINE; else if (
-      (!serverOnline && !databaseEnabled) || isSetToOffline
-    ) {
-      lookupType = LookUpTypes.OFFLINE;
+  public String getName(UUID uuid) {
+     if(Bukkit.getPlayer(uuid) != null) {
+      return Bukkit.getPlayer(uuid).getName();
+    } else if(Bukkit.getOfflinePlayer(uuid) != null) {
+      return Bukkit.getOfflinePlayer(uuid).getName();
     } else {
-      lookupType = LookUpTypes.ONLINE;
+      return null;
     }
   }
-
-  private void cleanLeaderboard() {
-    DataManager data = DataManager.getInstance();
-    if (!data.getData().contains("leaderboard")) return;
-    for (String key : data
-      .getData()
-      .getConfigurationSection("leaderboard")
-      .getKeys(false)) {
-      if (
-        Bukkit.getServer().getOfflinePlayer(UUID.fromString(key)).getName() ==
-        null
-      ) data.getData().set("leaderboard." + key, null);
-    }
-    data.saveData();
-  }
+  
 }

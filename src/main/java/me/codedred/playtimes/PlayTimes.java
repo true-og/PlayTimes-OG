@@ -29,7 +29,6 @@ public class PlayTimes extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
-		ServerManager.getInstance().register();
 		StatManager.getInstance().registerStatistics();
 		TimeManager.getInstance().registerTimings();
 
