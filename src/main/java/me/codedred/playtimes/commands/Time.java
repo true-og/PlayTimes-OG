@@ -2,7 +2,6 @@ package me.codedred.playtimes.commands;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +23,7 @@ import me.codedred.playtimes.statistics.StatManager;
 import me.codedred.playtimes.time.TimeConstants;
 import me.codedred.playtimes.time.TimeManager;
 import me.codedred.playtimes.utils.ChatUtil;
-import me.codedred.playtimes.utils.OGUtils;
+import net.trueog.utilitiesog.UtilitiesOG;
 
 public class Time implements CommandExecutor {
 
@@ -116,7 +115,7 @@ public class Time implements CommandExecutor {
 		}
 		sender.sendMessage(ChatUtil.format("&6&l*** PlayTimes Version Info ***"));
 		if (sender instanceof Player) {
-			OGUtils.playTimesOGMessage((Player) sender,
+			UtilitiesOG.trueogMessage((Player) sender,
 					"&6" +
 							"Server version: " +
 							"&f" +
@@ -140,9 +139,8 @@ public class Time implements CommandExecutor {
 					);
 		}
 		else {
-			Logger logger = Bukkit.getServer().getLogger();
-			logger.info(OGUtils.legacySerializerAnyCase(
-					    "&6" +
+			UtilitiesOG.logToConsole("[PlayTimes-OG] ", 
+					"&6" +
 							"Server version: " +
 							"&f" +
 							Bukkit.getServer().getVersion() +
@@ -162,7 +160,7 @@ public class Time implements CommandExecutor {
 							"\nAFK Status: " +
 							"&f" +
 							DataManager.getInstance().hasAfkEnabled()	
-					).content());
+					);
 
 		}
 

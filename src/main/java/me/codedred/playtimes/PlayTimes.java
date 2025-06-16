@@ -20,7 +20,6 @@ import me.codedred.playtimes.data.DataManager;
 import me.codedred.playtimes.data.database.manager.DatabaseManager;
 import me.codedred.playtimes.listeners.Join;
 import me.codedred.playtimes.listeners.Quit;
-import me.codedred.playtimes.server.ServerManager;
 import me.codedred.playtimes.statistics.StatManager;
 import me.codedred.playtimes.time.TimeManager;
 

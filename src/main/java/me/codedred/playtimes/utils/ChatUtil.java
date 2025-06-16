@@ -4,18 +4,22 @@ import org.bukkit.command.CommandSender;
 
 import me.codedred.playtimes.data.DataManager;
 import net.kyori.adventure.text.TextComponent;
+import net.trueog.utilitiesog.UtilitiesOG;
 
 public class ChatUtil {
 
 	private static final DataManager DATA_MANAGER = DataManager.getInstance();
 
 	public enum ChatTypes {
+
 		NO_PERMISSION,
 		PLAYER_NOT_FOUND,
 		PLAYER_NEVER_PLAYED,
+
 	}
 
 	public static void errno(CommandSender sender, ChatTypes type) {
+
 		switch (type) {
 		case NO_PERMISSION:
 			sender.sendMessage(
@@ -37,14 +41,19 @@ public class ChatUtil {
 					);
 			break;
 		}
+
 	}
 
 	public static TextComponent format(String msg) {
-		return OGUtils.legacySerializerAnyCase(msg);
+
+		return UtilitiesOG.trueogColorize(msg);
+
 	}
 
 	public static TextComponent formatWithPrefix(String msg) {
-		return OGUtils.legacySerializerAnyCase(DATA_MANAGER.getConfig().getString("prefix") + msg);
+
+		return UtilitiesOG.trueogColorize(DATA_MANAGER.getConfig().getString("prefix") + msg);
+
 	}
 
 }
