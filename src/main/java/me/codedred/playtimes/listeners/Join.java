@@ -15,65 +15,50 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class Join implements Listener {
 
-  @EventHandler
-  public void onJoin(PlayerJoinEvent event) {
-    UUID uuid = event.getPlayer().getUniqueId();
-    DataManager data = DataManager.getInstance();
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        DataManager data = DataManager.getInstance();
 
-    // Database
-    if (data.hasDatabase()) {
-      DatabaseManager dbManager = DatabaseManager.getInstance();
-      dbManager.retrievePlaytime(uuid);
-
-      // hacky bug fix that will update data again if database query was too slow.
-      // this bug only arises when switching servers super fast!
-      Bukkit
-        .getScheduler()
-        .runTaskLaterAsynchronously(
-          PlayTimes.getPlugin(PlayTimes.class),
-          () -> {
+        // Database
+        if (data.hasDatabase()) {
+            DatabaseManager dbManager = DatabaseManager.getInstance();
             dbManager.retrievePlaytime(uuid);
-          },
-          20L * 30
-        );
+
+            // hacky bug fix that will update data again if database query was too slow.
+            // this bug only arises when switching servers super fast!
+            Bukkit.getScheduler()
+                    .runTaskLaterAsynchronously(
+                            PlayTimes.getPlugin(PlayTimes.class),
+                            () -> {
+                                dbManager.retrievePlaytime(uuid);
+                            },
+                            20L * 30);
+        }
+
+        // Leaderboard
+        if (data.getData().contains("blocked." + event.getPlayer().getName().toLowerCase())) {
+            return;
+        }
+
+        ConfigurationSection leaderboardSection = data.getData().getConfigurationSection("leaderboard");
+
+        if (leaderboardSection == null) {
+            leaderboardSection = data.getData().createSection("leaderboard");
+        }
+
+        if (leaderboardSection.contains(uuid.toString())) {
+            return;
+        }
+
+        long time = StatManager.getInstance().getPlayerStat(uuid, StatisticType.PLAYTIME);
+
+        if (!data.getConfig().getBoolean("top-playtime.track-rawtime", false) && data.hasAfkEnabled()) {
+            time -= AFKManager.getInstance().getAFKTime(event.getPlayer().getUniqueId()) * 20;
+        }
+
+        leaderboardSection.set(uuid.toString(), time);
+
+        data.saveData();
     }
-
-    // Leaderboard
-    if (
-      data
-        .getData()
-        .contains("blocked." + event.getPlayer().getName().toLowerCase())
-    ) {
-      return;
-    }
-
-    ConfigurationSection leaderboardSection = data
-      .getData()
-      .getConfigurationSection("leaderboard");
-
-    if (leaderboardSection == null) {
-      leaderboardSection = data.getData().createSection("leaderboard");
-    }
-
-    if (leaderboardSection.contains(uuid.toString())) {
-      return;
-    }
-
-    long time = StatManager
-      .getInstance()
-      .getPlayerStat(uuid, StatisticType.PLAYTIME);
-
-    if (
-      !data.getConfig().getBoolean("top-playtime.track-rawtime", false) &&
-      data.hasAfkEnabled()
-    ) {
-      time -=
-        AFKManager.getInstance().getAFKTime(event.getPlayer().getUniqueId()) *
-        20;
-    }
-
-    leaderboardSection.set(uuid.toString(), time);
-
-    data.saveData();
-  }
 }

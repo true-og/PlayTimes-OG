@@ -14,68 +14,63 @@ import org.bukkit.entity.Player;
 
 public class RisingStats implements Stats {
 
-  @Override
-  public long getPlayerStatistic(UUID uuid, StatisticType type) {
-    if (Bukkit.getPlayer(uuid) != null) return getOnlineStatistic(
-      Bukkit.getPlayer(uuid),
-      type
-    );
+    @Override
+    public long getPlayerStatistic(UUID uuid, StatisticType type) {
+        if (Bukkit.getPlayer(uuid) != null) return getOnlineStatistic(Bukkit.getPlayer(uuid), type);
 
-    File playerStatistics = new File(worldFolder, uuid + ".json");
-    if (playerStatistics.exists()) {
-      try {
-        JsonObject jsonObject = new Gson()
-          .fromJson(new FileReader(playerStatistics), JsonObject.class);
-        JsonObject pilot = (JsonObject) jsonObject.get("stats");
-        JsonObject passenger = (JsonObject) pilot.get("minecraft:custom");
+        File playerStatistics = new File(worldFolder, uuid + ".json");
+        if (playerStatistics.exists()) {
+            try {
+                JsonObject jsonObject = new Gson().fromJson(new FileReader(playerStatistics), JsonObject.class);
+                JsonObject pilot = (JsonObject) jsonObject.get("stats");
+                JsonObject passenger = (JsonObject) pilot.get("minecraft:custom");
 
-        switch (type) {
-          case PLAYTIME:
-            return passenger.get("minecraft:play_one_minute").getAsLong();
-          case TIMES_JOINED:
-            return passenger.get("minecraft:leave_game").getAsLong();
+                switch (type) {
+                    case PLAYTIME:
+                        return passenger.get("minecraft:play_one_minute").getAsLong();
+                    case TIMES_JOINED:
+                        return passenger.get("minecraft:leave_game").getAsLong();
+                }
+            } catch (Exception e) {
+                // e.printStackTrace();
+            }
         }
-      } catch (Exception e) {
-        //e.printStackTrace();
-      }
-    }
-    return 0;
-  }
-
-  @Override
-  public long getOnlineStatistic(Player player, StatisticType type) {
-    switch (type) {
-      case PLAYTIME:
-        return player.getStatistic(Statistic.PLAY_ONE_MINUTE);
-      case TIMES_JOINED:
-        return player.getStatistic(Statistic.LEAVE_GAME) + 1;
-      default:
         return 0;
     }
-  }
 
-  @Override
-  public boolean hasJoinedBefore(UUID uuid) {
-    File playerStatistics = new File(worldFolder, uuid + ".json");
-    return playerStatistics.exists();
-  }
-
-  @Override
-  public String getJoinDate(UUID uuid) {
-    Player player = Bukkit.getPlayer(uuid);
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-      DataManager.getInstance().getConfig().getString("date-format")
-    );
-    Calendar calendar = Calendar.getInstance();
-
-    if (player == null) {
-      calendar.setTimeInMillis(Bukkit.getOfflinePlayer(uuid).getFirstPlayed());
-      return simpleDateFormat.format(calendar.getTime());
-    } else if (player.hasPlayedBefore()) {
-      calendar.setTimeInMillis(player.getFirstPlayed());
-      return simpleDateFormat.format(calendar.getTime());
+    @Override
+    public long getOnlineStatistic(Player player, StatisticType type) {
+        switch (type) {
+            case PLAYTIME:
+                return player.getStatistic(Statistic.PLAY_ONE_MINUTE);
+            case TIMES_JOINED:
+                return player.getStatistic(Statistic.LEAVE_GAME) + 1;
+            default:
+                return 0;
+        }
     }
 
-    return "Never Joined";
-  }
+    @Override
+    public boolean hasJoinedBefore(UUID uuid) {
+        File playerStatistics = new File(worldFolder, uuid + ".json");
+        return playerStatistics.exists();
+    }
+
+    @Override
+    public String getJoinDate(UUID uuid) {
+        Player player = Bukkit.getPlayer(uuid);
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(DataManager.getInstance().getConfig().getString("date-format"));
+        Calendar calendar = Calendar.getInstance();
+
+        if (player == null) {
+            calendar.setTimeInMillis(Bukkit.getOfflinePlayer(uuid).getFirstPlayed());
+            return simpleDateFormat.format(calendar.getTime());
+        } else if (player.hasPlayedBefore()) {
+            calendar.setTimeInMillis(player.getFirstPlayed());
+            return simpleDateFormat.format(calendar.getTime());
+        }
+
+        return "Never Joined";
+    }
 }

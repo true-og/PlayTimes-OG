@@ -7,8 +7,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class onInteract implements Listener {
 
-  @EventHandler
-  public void onPlayerInteract(PlayerInteractEvent event) {
-    AFKManager.getInstance().updateActivity(event.getPlayer());
-  }
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        AFKManager.getInstance().updateActivity(event.getPlayer());
+    }
 }

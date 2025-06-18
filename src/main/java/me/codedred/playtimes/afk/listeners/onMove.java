@@ -7,11 +7,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class onMove implements Listener {
 
-  @EventHandler
-  public void onPlayerMove(PlayerMoveEvent event) {
-    if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
-      return;
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
+            return;
+        }
+        AFKManager.getInstance().updateActivity(event.getPlayer());
     }
-    AFKManager.getInstance().updateActivity(event.getPlayer());
-  }
 }

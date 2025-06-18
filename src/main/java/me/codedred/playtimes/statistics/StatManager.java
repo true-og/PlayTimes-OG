@@ -8,62 +8,57 @@ import me.codedred.playtimes.utils.ServerUtils;
 
 public class StatManager {
 
-  private static final StatManager instance = new StatManager();
+    private static final StatManager instance = new StatManager();
 
-  public static StatManager getInstance() {
-    return instance;
-  }
-
-  private Stats stats;
-  private boolean legacy = false;
-
-  public String name;
-
-  public void registerStatistics() {
-    if (ServerUtils.isRisenVersion()) {
-      stats = new RisenStats();
-      name = "Risen";
-    } else if (ServerUtils.isNewerVersion()) {
-      stats = new RisingStats();
-      name = "Rising";
-    } else {
-      stats = new LegacyStats();
-      setLegacy();
-      name = "Legacy";
+    public static StatManager getInstance() {
+        return instance;
     }
-  }
 
-  public Stats getStats() {
-    return stats;
-  }
+    private Stats stats;
+    private boolean legacy = false;
 
-  public long getPlayerStat(UUID uuid, StatisticType type) {
-    return getStats().getPlayerStatistic(uuid, type);
-  }
+    public String name;
 
-  public boolean hasJoinedBefore(UUID uuid) {
-    return getStats().hasJoinedBefore(uuid);
-  }
+    public void registerStatistics() {
+        if (ServerUtils.isRisenVersion()) {
+            stats = new RisenStats();
+            name = "Risen";
+        } else if (ServerUtils.isNewerVersion()) {
+            stats = new RisingStats();
+            name = "Rising";
+        } else {
+            stats = new LegacyStats();
+            setLegacy();
+            name = "Legacy";
+        }
+    }
 
-  public String getJoinDate(UUID uuid) {
-    return getStats().getJoinDate(uuid);
-  }
+    public Stats getStats() {
+        return stats;
+    }
 
-  private void setLegacy() {
-    legacy = true;
-  }
+    public long getPlayerStat(UUID uuid, StatisticType type) {
+        return getStats().getPlayerStatistic(uuid, type);
+    }
 
-  public boolean isLegacy() {
-    return legacy;
-  }
+    public boolean hasJoinedBefore(UUID uuid) {
+        return getStats().hasJoinedBefore(uuid);
+    }
 
-  public String getUptime() {
-    return TimeManager
-      .getInstance()
-      .buildFormat(
-        (int) TimeUnit.MILLISECONDS.toSeconds(
-          ManagementFactory.getRuntimeMXBean().getUptime()
-        )
-      );
-  }
+    public String getJoinDate(UUID uuid) {
+        return getStats().getJoinDate(uuid);
+    }
+
+    private void setLegacy() {
+        legacy = true;
+    }
+
+    public boolean isLegacy() {
+        return legacy;
+    }
+
+    public String getUptime() {
+        return TimeManager.getInstance().buildFormat((int) TimeUnit.MILLISECONDS.toSeconds(
+                ManagementFactory.getRuntimeMXBean().getUptime()));
+    }
 }
