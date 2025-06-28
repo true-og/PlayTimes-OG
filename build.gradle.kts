@@ -1,9 +1,10 @@
 plugins {
     id("java") // Tell gradle this is a java project.
     id("java-library") // Import helper for source-based libraries.
-    id("com.diffplug.spotless") version "7.0.4"
+    id("com.diffplug.spotless") version "7.0.4" // Import auto-formatter.
     id("com.gradleup.shadow") version "8.3.6" // Import shadow API.
     eclipse // Import eclipse plugin for IDE integration.
+    id("io.freefair.lombok") version "8.13.1" // Automatic lombok support.
 }
 
 java {
@@ -38,8 +39,7 @@ repositories {
 dependencies {
     compileOnly("org.purpurmc.purpur:purpur-api:1.19.4-R0.1-SNAPSHOT") // Declare purpur API version to be packaged.
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.2.3") // Import MiniPlaceholders API.
-    compileOnlyApi(project(":libs:Utilities-OG"))
-    compileOnly("org.projectlombok:lombok:1.18.28")
+    compileOnlyApi(project(":libs:Utilities-OG")) // Import TrueOG Network Utilities-OG API.
 }
 
 tasks.withType<AbstractArchiveTask>().configureEach { // Ensure reproducible .jars
