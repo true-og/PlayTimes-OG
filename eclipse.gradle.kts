@@ -26,7 +26,7 @@ configurations.creating {
 
 configure<EclipseModel> {
     project {
-        name = "Template-OG-Plugin"
+        name = "PlayTimes-OG-Plugin"
     }
     classpath {
         plusConfigurations.add(ideLibs)
