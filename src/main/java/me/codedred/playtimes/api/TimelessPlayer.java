@@ -13,22 +13,31 @@ public class TimelessPlayer {
     private final TimeManager timings;
 
     public TimelessPlayer(final Player player) {
+
         this.uuid = player.getUniqueId();
         this.stats = StatManager.getInstance();
         this.timings = TimeManager.getInstance();
+
     }
 
     public TimelessPlayer(final UUID player) {
+
         this.uuid = player;
         this.stats = StatManager.getInstance();
         this.timings = TimeManager.getInstance();
+
     }
 
     public String getPlayTime() {
+
         return this.timings.buildFormat(this.stats.getPlayerStat(this.uuid, StatisticType.PLAYTIME) / 20L);
+
     }
 
     public long getRawPlayTimeInSeconds() {
+
         return this.stats.getPlayerStat(this.uuid, StatisticType.PLAYTIME) / 20L;
+
     }
+
 }

@@ -15,17 +15,22 @@ public class Uptime implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, String cmdL, String[] args) {
+
         // command must be uptime,serveruptime,or serverupt
-        if (!cmdL.equalsIgnoreCase("uptime")
-                && !cmdL.equalsIgnoreCase("serveruptime")
-                && !cmdL.equalsIgnoreCase("serverupt")) {
+        if (!cmdL.equalsIgnoreCase("uptime") && !cmdL.equalsIgnoreCase("serveruptime")
+                && !cmdL.equalsIgnoreCase("serverupt"))
+        {
+
             return false;
+
         }
 
         // check for permission
         if (!sender.hasPermission("pt.uptime")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return true;
+
         }
 
         // get the uptime
@@ -34,24 +39,30 @@ public class Uptime implements CommandExecutor {
 
         // iterate through the messages and replace the placeholders
         for (String message : messages) {
+
             // 1: replace them using placeholder api
             // TODO: use MMAPI
             /*
-              if (ServerUtils.hasPAPI() && sender instanceof Player) {
-                Player player = (Player) sender;
-                message = PlaceholderAPI.setPlaceholders(player, message);
-              }
-            */
+             * if (ServerUtils.hasPAPI() && sender instanceof Player) { Player player =
+             * (Player) sender; message = PlaceholderAPI.setPlaceholders(player, message); }
+             */
             // 2. replace them using java string methods
             if (message.contains("{\"text\":") && sender instanceof Player) {
+
                 String consoleCommand = "tellraw " + sender.getName() + " " + message.replace("%serveruptime%", uptime);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), consoleCommand);
+
                 // 3. if all else fails dont send name
             } else if (sender instanceof Player) {
+
                 sender.sendMessage(ChatUtil.format(message.replace("%serveruptime%", uptime)));
+
             }
+
         }
 
         return true;
+
     }
+
 }

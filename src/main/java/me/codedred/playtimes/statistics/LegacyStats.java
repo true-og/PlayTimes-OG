@@ -15,51 +15,72 @@ public class LegacyStats implements Stats {
 
     @Override
     public long getPlayerStatistic(UUID uuid, StatisticType type) {
+
         File playerStatistics = new File(worldFolder, uuid + ".json");
 
         if (playerStatistics.exists()) {
+
             try {
+
                 JsonObject jsonObject = new Gson().fromJson(new FileReader(playerStatistics), JsonObject.class);
 
                 switch (type) {
+
                     case PLAYTIME:
                         return jsonObject.get("stat.playOneMinute").getAsLong();
                     case TIMES_JOINED:
                         return jsonObject.get("stat.leaveGame").getAsLong();
+
                 }
+
             } catch (Exception e) {
+
                 // e.printStackTrace();
             }
+
         }
+
         return 0;
+
     }
 
     @Override
     public long getOnlineStatistic(Player player, StatisticType type) {
+
         return getPlayerStatistic(player.getUniqueId(), type);
+
     }
 
     @Override
     public boolean hasJoinedBefore(UUID uuid) {
+
         File playerStatistics = new File(worldFolder, uuid + ".json");
         return playerStatistics.exists();
+
     }
 
     @Override
     public String getJoinDate(UUID uuid) {
+
         Player player = Bukkit.getPlayer(uuid);
-        SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat(DataManager.getInstance().getConfig().getString("date-format"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+                DataManager.getInstance().getConfig().getString("date-format"));
         Calendar calendar = Calendar.getInstance();
 
         if (player == null) {
+
             calendar.setTimeInMillis(Bukkit.getOfflinePlayer(uuid).getFirstPlayed());
             return simpleDateFormat.format(calendar.getTime());
+
         } else if (player.hasPlayedBefore()) {
+
             calendar.setTimeInMillis(player.getFirstPlayed());
             return simpleDateFormat.format(calendar.getTime());
+
         }
 
         return "Never Joined";
+
     }
+
 }

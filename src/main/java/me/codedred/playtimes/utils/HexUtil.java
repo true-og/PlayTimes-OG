@@ -7,6 +7,7 @@ public class HexUtil {
     private HexUtil() {
 
         throw new IllegalStateException("Utility Class");
+
     }
 
     public static String hex(String message) {
@@ -24,18 +25,23 @@ public class HexUtil {
 
                     i += 8;
                     continue;
+
                 }
+
             }
 
             builder.append(message.charAt(i));
+
         }
 
         return TextUtils.processColorCodes(builder.toString());
+
     }
 
     private static boolean isValidHexCode(String hexCode) {
 
         return hexCode.matches("^[a-fA-F0-9]{6}$");
+
     }
 
     private static String toLegacyHex(String hexCode) {
@@ -45,8 +51,11 @@ public class HexUtil {
         for (char c : hexCode.toCharArray()) {
 
             legacy.append('&').append(c);
+
         }
 
         return legacy.toString();
+
     }
+
 }

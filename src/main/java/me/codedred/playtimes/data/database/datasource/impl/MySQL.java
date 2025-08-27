@@ -14,6 +14,7 @@ public class MySQL implements DataSource {
     private final String password;
 
     public MySQL(PlayTimes plugin) {
+
         var config = DataManager.getInstance().getDBConfig().getConfigurationSection("database-settings");
         String host = config.getString("host");
         String port = config.getString("port");
@@ -22,24 +23,33 @@ public class MySQL implements DataSource {
         String database = config.getString("database");
         boolean SSL = config.getBoolean("useSSL");
 
-        this.connectionUrl =
-                String.format("jdbc:mysql://%s:%s/%s?autoReconnect=true&useSSL=" + SSL, host, port, database);
+        this.connectionUrl = String.format("jdbc:mysql://%s:%s/%s?autoReconnect=true&useSSL=" + SSL, host, port,
+                database);
 
         try {
+
             Class.forName("com.mysql.cj.jdbc.Driver");
             plugin.getLogger().info("Successfully connected to database.");
+
         } catch (ClassNotFoundException e) {
+
             plugin.getLogger().severe("MySQL JDBC Driver not found: " + e.getMessage());
+
         }
+
     }
 
     @Override
     public Connection getConnection() throws SQLException {
+
         return DriverManager.getConnection(connectionUrl, user, password);
+
     }
 
     @Override
     public void closeConnection() throws SQLException {
+
         // connection.close();
     }
+
 }

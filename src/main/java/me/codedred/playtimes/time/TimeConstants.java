@@ -9,10 +9,13 @@ public class TimeConstants {
     private static boolean rounded;
 
     static {
+
         reload();
+
     }
 
     public static void reload() {
+
         FileConfiguration data = DataManager.getInstance().getConfig();
         second = data.getString("playtime.name.second");
         seconds = data.getString("playtime.name.seconds");
@@ -23,41 +26,61 @@ public class TimeConstants {
         day = data.getString("playtime.name.day");
         days = data.getString("playtime.name.days");
         rounded = data.getBoolean("playtime.round-numbers");
+
     }
 
     public static String getSecond() {
+
         return second;
+
     }
 
     public static String getSeconds() {
+
         return seconds;
+
     }
 
     public static String getMinute() {
+
         return minute;
+
     }
 
     public static String getMinutes() {
+
         return minutes;
+
     }
 
     public static String getHour() {
+
         return hour;
+
     }
 
     public static String getHours() {
+
         return hours;
+
     }
 
     public static String getDay() {
+
         return day;
+
     }
 
     public static String getDays() {
+
         return days;
+
     }
 
     public static boolean getRounded() {
+
         return rounded;
+
     }
+
 }

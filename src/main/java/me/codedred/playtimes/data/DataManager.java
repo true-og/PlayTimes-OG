@@ -14,42 +14,61 @@ public class DataManager {
     private final CustomConfig cfg = new CustomConfig(JavaPlugin.getPlugin(PlayTimes.class), "config.yml");
 
     public static DataManager getInstance() {
+
         return instance;
+
     }
 
     public FileConfiguration getConfig() {
+
         return cfg.getConfig();
+
     }
 
     public FileConfiguration getData() {
+
         return data.getConfig();
+
     }
 
     public FileConfiguration getDBConfig() {
+
         return db.getConfig();
+
     }
 
     public void saveData() {
+
         data.saveConfig();
+
     }
 
     public void reloadAll() {
+
         data.reloadConfig();
         cfg.reloadConfig();
         db.reloadConfig();
-        if (hasAfkEnabled()) AFKManager.getInstance().reload();
+        if (hasAfkEnabled())
+            AFKManager.getInstance().reload();
+
     }
 
     public void reloadDatabase() {
+
         db.reloadConfig();
+
     }
 
     public boolean hasDatabase() {
-        return (getDBConfig().getBoolean("database-settings.enabled")
-                && DatabaseManager.getInstance().isConnected());
+
+        return (getDBConfig().getBoolean("database-settings.enabled") && DatabaseManager.getInstance().isConnected());
+
     }
 
     public boolean hasAfkEnabled() {
+
         return getConfig().getBoolean("afk-settings.enabled", false);
+
     }
+
 }

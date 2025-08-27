@@ -8,18 +8,25 @@ import lombok.Getter;
 public class Async {
 
     @Getter
-    private static final ForkJoinPool worker =
-            new ForkJoinPool(8, ForkJoinPool.defaultForkJoinWorkerThreadFactory, (t, e) -> e.printStackTrace(), false);
+    private static final ForkJoinPool worker = new ForkJoinPool(8, ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+            (t, e) -> e.printStackTrace(), false);
 
     public static CompletableFuture<Void> run(Runnable runnable) {
-        return CompletableFuture.runAsync(
-                () -> {
-                    try {
-                        runnable.run();
-                    } catch (Exception exception) {
-                        throw new CompletionException(exception);
-                    }
-                },
-                worker);
+
+        return CompletableFuture.runAsync(() -> {
+
+            try {
+
+                runnable.run();
+
+            } catch (Exception exception) {
+
+                throw new CompletionException(exception);
+
+            }
+
+        }, worker);
+
     }
+
 }

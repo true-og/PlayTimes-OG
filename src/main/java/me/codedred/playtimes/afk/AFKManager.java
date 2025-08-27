@@ -30,88 +30,122 @@ public class AFKManager {
     private BukkitTask afkCheckerTask = null;
 
     private AFKManager() {
+
         config = DataManager.getInstance().getConfig();
         afkThresholdMillis = config.getLong("afk-settings.threshold") * 60L * 1000L;
         notifyOnAfk = config.getBoolean("afk-settings.broadcast-afk.on-enter-afk");
         notifyOnBack = config.getBoolean("afk-settings.broadcast-afk.on-exit-afk");
         onAfkMessage = config.getString("afk-settings.on-enter-afk-message");
         onBackMessage = config.getString("afk-settings.on-exit-afk-message");
+
     }
 
     public static AFKManager getInstance() {
+
         if (instance == null) {
+
             instance = new AFKManager();
+
         }
+
         return instance;
+
     }
 
     public void updateActivity(Player player) {
+
         boolean wasAFK = isAFK(player);
         lastActive.put(player.getUniqueId(), System.currentTimeMillis());
 
         if (wasAFK && notifyOnBack) {
+
             player.sendMessage(ChatUtil.format(onBackMessage));
+
         }
+
     }
 
     public boolean isAFK(Player player) {
+
         return (lastActive.containsKey(player.getUniqueId())
                 && System.currentTimeMillis() - lastActive.get(player.getUniqueId()) > afkThresholdMillis);
+
     }
 
     public void startAFKChecker() {
+
         if (afkCheckerTask == null || afkCheckerTask.isCancelled()) {
-            afkCheckerTask = Bukkit.getScheduler()
-                    .runTaskTimerAsynchronously(
-                            PlayTimes.getPlugin(PlayTimes.class),
-                            () -> {
-                                for (Player player : Bukkit.getOnlinePlayers()) {
-                                    if (isAFK(player)) {
-                                        if (!afkTime.containsKey(player.getUniqueId()) && notifyOnAfk) {
-                                            player.sendMessage(ChatUtil.format(onAfkMessage));
-                                        }
-                                        afkTime.put(
-                                                player.getUniqueId(),
-                                                afkTime.getOrDefault(
-                                                                player.getUniqueId(),
-                                                                getDefaultAfkTime(player.getUniqueId()))
-                                                        + 1);
-                                    }
+
+            afkCheckerTask = Bukkit.getScheduler().runTaskTimerAsynchronously(PlayTimes.getPlugin(PlayTimes.class),
+                    () ->
+                    {
+
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+
+                            if (isAFK(player)) {
+
+                                if (!afkTime.containsKey(player.getUniqueId()) && notifyOnAfk) {
+
+                                    player.sendMessage(ChatUtil.format(onAfkMessage));
+
                                 }
-                            },
-                            20L,
-                            20L);
+
+                                afkTime.put(player.getUniqueId(), afkTime.getOrDefault(player.getUniqueId(),
+                                        getDefaultAfkTime(player.getUniqueId())) + 1);
+
+                            }
+
+                        }
+
+                    }, 20L, 20L);
+
         }
+
     }
 
     public void endAFKChecker() {
+
         if (afkCheckerTask != null) {
+
             afkCheckerTask.cancel();
             afkCheckerTask = null;
+
         }
+
     }
 
     private Long getDefaultAfkTime(UUID uuid) {
+
         DataManager dataManager = DataManager.getInstance();
 
         if (dataManager.hasDatabase() && DatabaseManager.getInstance().hasTimeForServer(uuid)) {
+
             Map<String, Long> timeMap = DatabaseManager.getInstance().getTimeForServer(uuid);
             return timeMap != null ? timeMap.getOrDefault("afktime", 0L) : 0L;
+
         } else {
+
             return dataManager.getData().getLong("afktime." + uuid, 0L);
+
         }
+
     }
 
     public void removePlayer(UUID uuid) {
+
         lastActive.remove(uuid);
         afkTime.remove(uuid);
+
     }
 
     public long getAFKTime(UUID uuid) {
+
         return afkTime.getOrDefault(uuid, getDefaultAfkTime(uuid));
+
     }
 
     public void reload() {
+
         endAFKChecker();
         FileConfiguration config = DataManager.getInstance().getConfig();
         afkThresholdMillis = config.getLong("afk-settings.threshold") * 60L * 1000L;
@@ -120,5 +154,7 @@ public class AFKManager {
         onAfkMessage = config.getString("afk-settings.on-enter-afk-message");
         onBackMessage = config.getString("afk-settings.on-exit-afk-message");
         startAFKChecker();
+
     }
+
 }

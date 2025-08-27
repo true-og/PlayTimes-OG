@@ -28,14 +28,18 @@ public class Time implements CommandExecutor {
     private final DataManager data = DataManager.getInstance();
 
     public boolean onCommand(CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+
         if (!sender.hasPermission("pt.use")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return true;
+
         }
 
         String arg = args.length > 0 ? args[0].toLowerCase() : "";
 
         switch (arg) {
+
             case "":
                 handlePlayerCommand(sender);
                 break;
@@ -63,16 +67,22 @@ public class Time implements CommandExecutor {
             default:
                 handleOtherPlayerCommand(sender, args);
                 break;
+
         }
 
         return true;
+
     }
 
     private void handleHelpCommand(CommandSender sender) {
+
         if (!sender.hasPermission("pt.reload")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return;
+
         }
+
         sender.sendMessage(ChatUtil.format("&6&l*** PlayTimes Help ***"));
         sender.sendMessage(ChatUtil.format("&e/pt: &7Displays your play time"));
         sender.sendMessage(ChatUtil.format("&e/pt <player>: &7Displays the play time of <player>"));
@@ -81,187 +91,236 @@ public class Time implements CommandExecutor {
         sender.sendMessage(ChatUtil.format("&e/pt block <player>: &7Blocks a player from leaderboards"));
         sender.sendMessage(ChatUtil.format("&e/pt unblock <player>: &7Unblocks a player from leaderboards"));
         sender.sendMessage(ChatUtil.format("&e/pt version: &7Displays the version info"));
+
     }
 
     private void handleVersionCommand(CommandSender sender) {
+
         if (!sender.hasPermission("pt.reload")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return;
+
         }
+
         sender.sendMessage(ChatUtil.format("&6&l*** PlayTimes Version Info ***"));
         if (sender instanceof Player) {
-            UtilitiesOG.trueogMessage(
-                    (Player) sender,
-                    "&6" + "Server version: "
-                            + "&f"
-                            + Bukkit.getServer().getVersion()
-                            + "&6"
-                            + "\nPlayTimes version: "
-                            + "&f"
-                            + "v1.0"
-                            + "&6"
-                            + "\nStat Manager: "
-                            + "&f"
-                            + StatManager.getInstance().name
-                            + "&6"
-                            + "\nDatabase connected: "
-                            + "&f"
-                            + DataManager.getInstance().hasDatabase()
-                            + "&6"
-                            + "\nAFK Status: "
-                            + "&f"
-                            + DataManager.getInstance().hasAfkEnabled());
+
+            UtilitiesOG.trueogMessage((Player) sender,
+                    "&6" + "Server version: " + "&f" + Bukkit.getServer().getVersion() + "&6" + "\nPlayTimes version: "
+                            + "&f" + "v1.0" + "&6" + "\nStat Manager: " + "&f" + StatManager.getInstance().name + "&6"
+                            + "\nDatabase connected: " + "&f" + DataManager.getInstance().hasDatabase() + "&6"
+                            + "\nAFK Status: " + "&f" + DataManager.getInstance().hasAfkEnabled());
+
         } else {
-            UtilitiesOG.logToConsole(
-                    "[PlayTimes-OG] ",
-                    "&6" + "Server version: "
-                            + "&f"
-                            + Bukkit.getServer().getVersion()
-                            + "&6"
-                            + "\nPlayTimes version: "
-                            + "&f"
-                            + "v1.0"
-                            + "&6"
-                            + "\nStat Manager: "
-                            + "&f"
-                            + StatManager.getInstance().name
-                            + "&6"
-                            + "\nDatabase connected: "
-                            + "&f"
-                            + DataManager.getInstance().hasDatabase()
-                            + "&6"
-                            + "\nAFK Status: "
-                            + "&f"
-                            + DataManager.getInstance().hasAfkEnabled());
+
+            UtilitiesOG.logToConsole("[PlayTimes-OG] ",
+                    "&6" + "Server version: " + "&f" + Bukkit.getServer().getVersion() + "&6" + "\nPlayTimes version: "
+                            + "&f" + "v1.0" + "&6" + "\nStat Manager: " + "&f" + StatManager.getInstance().name + "&6"
+                            + "\nDatabase connected: " + "&f" + DataManager.getInstance().hasDatabase() + "&6"
+                            + "\nAFK Status: " + "&f" + DataManager.getInstance().hasAfkEnabled());
+
         }
+
     }
 
     private void handlePlayerCommand(CommandSender sender) {
+
         if (!(sender instanceof Player)) {
+
             StatManager stats = StatManager.getInstance();
             sender.sendMessage(ChatUtil.format("&cThe console has been up for " + stats.getUptime()));
             return;
+
         }
 
         new BukkitRunnable() {
+
             @Override
             public void run() {
+
                 Player player = (Player) sender;
                 Message message = new Message(sender, player.getUniqueId(), player.getName());
                 message.sendMessageToTarget();
+
             }
+
         }.runTaskAsynchronously(JavaPlugin.getPlugin(PlayTimes.class));
+
     }
 
     private void handleReloadCommand(CommandSender sender) {
+
         if (!sender.hasPermission("pt.reload")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return;
+
         }
+
         data.reloadAll();
         TimeConstants.reload();
         TimeManager.getInstance().registerTimings();
         sender.sendMessage(ChatUtil.format("&aPlayTimes Configurations Reloaded!"));
         if (DataManager.getInstance().hasDatabase()) {
+
             sender.sendMessage(ChatUtil.format("&aTrying to reload the Database settings?"));
             sender.sendMessage(ChatUtil.format(" &e&oTry, /pt reloadDatabase"));
+
         }
+
     }
 
     private void handleReloadDatabaseCommand(CommandSender sender) {
+
         if (!sender.hasPermission("pt.reload")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return;
+
         }
+
         data.reloadDatabase();
         PlayTimes.getPlugin(PlayTimes.class).loadDatabase();
         sender.sendMessage(ChatUtil.format("&aDatabase Reloaded."));
         sender.sendMessage(ChatUtil.format("&oIf you are still encountering issues try restarting your server."));
+
     }
 
     private void handleTopCommand(CommandSender sender) {
+
         Bukkit.dispatchCommand(sender, "toppt");
+
     }
 
     private void handleBlockCommand(CommandSender sender, String[] args, boolean block) {
+
         String blockAction = block ? "block" : "unblock";
         if (!sender.hasPermission("pt.block")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return;
+
         }
+
         if (args.length < 2) {
+
             sender.sendMessage(
                     ChatUtil.formatWithPrefix("&c&lIncorrect Usage&c, try &7/pt " + blockAction + " <player>"));
             return;
+
         }
+
         String playerName = args[1];
         String blockedKey = "blocked." + playerName.toLowerCase();
         if (block == data.getData().contains(blockedKey)) {
+
             sender.sendMessage(ChatUtil.formatWithPrefix("&cUser is already " + blockAction + "ed!"));
             sender.sendMessage(
                     ChatUtil.formatWithPrefix("&c&oMaybe try, &7/pt " + (block ? "unblock" : "block") + " <player>"));
             return;
+
         }
+
         UUID uuid;
         if (Bukkit.getPlayer(playerName) == null) {
+
             try {
+
                 uuid = ServerManager.getInstance().getUUID(playerName.toLowerCase());
+
             } catch (NullPointerException e) {
+
                 ChatUtil.errno(sender, ChatUtil.ChatTypes.PLAYER_NOT_FOUND);
                 return;
+
             }
+
         } else {
+
             uuid = Objects.requireNonNull(Bukkit.getPlayer(playerName)).getUniqueId();
+
         }
+
         if (uuid == null) {
+
             sender.sendMessage(ChatUtil.formatWithPrefix("&c&lUser not found."));
             return;
+
         }
+
         if (block) {
+
             data.getData().set(blockedKey, uuid.toString());
             if (data.getData().contains("leaderboard." + uuid)) {
+
                 data.getData().set("leaderboard." + uuid, null);
+
             }
+
             sender.sendMessage(ChatUtil.formatWithPrefix("&aUser &c&lBLOCKED &afrom leaderboards!"));
+
         } else {
+
             data.getData().set(blockedKey, null);
             sender.sendMessage(ChatUtil.formatWithPrefix("&aUser &b&lUNBLOCKED &afrom leaderboards!"));
+
         }
+
         data.saveData();
+
     }
 
     private void handleOtherPlayerCommand(CommandSender sender, String[] args) {
+
         if (!sender.hasPermission("pt.others")) {
+
             ChatUtil.errno(sender, ChatUtil.ChatTypes.NO_PERMISSION);
             return;
+
         }
+
         new BukkitRunnable() {
+
             @Override
             public void run() {
+
                 Pattern p = Pattern.compile("[^a-z0-9_]", Pattern.CASE_INSENSITIVE);
                 Matcher m = p.matcher(args[0]);
                 boolean b = m.find();
 
                 if (b) {
+
                     ChatUtil.errno(sender, ChatUtil.ChatTypes.PLAYER_NOT_FOUND);
                     return;
+
                 }
 
                 UUID target;
                 if (Bukkit.getPlayer(args[0]) == null) {
+
                     target = ServerManager.getInstance().getUUID(args[0]);
                     if (target == null) {
+
                         ChatUtil.errno(sender, ChatUtil.ChatTypes.PLAYER_NOT_FOUND);
                         return;
+
                     }
+
                 } else {
+
                     target = Objects.requireNonNull(Bukkit.getPlayer(args[0])).getUniqueId();
+
                 }
 
                 OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(target);
                 Message message = new Message(sender, target, offlinePlayer.getName());
                 message.sendMessageToTarget();
+
             }
+
         }.runTaskAsynchronously(JavaPlugin.getPlugin(PlayTimes.class));
+
     }
+
 }

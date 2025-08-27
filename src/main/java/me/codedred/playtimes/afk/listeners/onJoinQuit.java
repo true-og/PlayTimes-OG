@@ -10,11 +10,16 @@ public class onJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+
         AFKManager.getInstance().updateActivity(event.getPlayer());
+
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+
         AFKManager.getInstance().removePlayer(event.getPlayer().getUniqueId());
+
     }
+
 }

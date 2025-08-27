@@ -9,6 +9,9 @@ public class onChat implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
+
         AFKManager.getInstance().updateActivity(event.getPlayer());
+
     }
+
 }

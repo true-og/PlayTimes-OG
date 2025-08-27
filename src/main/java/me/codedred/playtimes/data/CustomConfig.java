@@ -19,43 +19,54 @@ public class CustomConfig {
     private File dataConfigFile = null;
 
     public CustomConfig(PlayTimes plugin, String fileName) {
+
         this.plugin = plugin;
         this.name = fileName;
         saveDefaultConfig();
+
     }
 
     public void reloadConfig() {
+
         if (this.dataConfigFile == null) {
+
             this.dataConfigFile = new File(this.plugin.getDataFolder(), name);
+
         }
 
         this.dataConfig = YamlConfiguration.loadConfiguration(this.dataConfigFile);
 
-        if ("config.yml".equals(name)) checkAndAddDefaults();
+        if ("config.yml".equals(name))
+            checkAndAddDefaults();
 
         try (InputStream defConfigStream = this.plugin.getResource(name)) {
+
             if (defConfigStream != null) {
-                YamlConfiguration defConfig =
-                        YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
+
+                YamlConfiguration defConfig = YamlConfiguration
+                        .loadConfiguration(new InputStreamReader(defConfigStream));
                 this.dataConfig.setDefaults(defConfig);
+
             }
+
         } catch (IOException e) {
+
             this.plugin.getLogger().log(Level.SEVERE, "Error reading default config", e);
+
         }
+
     }
 
     private void checkAndAddDefaults() {
+
         Map<String, Object> requiredKeys = new LinkedHashMap<>();
         requiredKeys.put("prefix", "&7[&b&lPlayTimes&7]");
         requiredKeys.put("use-papi-placeholders", false);
 
-        requiredKeys.put("playtime.message", new String[] {
-            "&b&m=======&b&l[%player%]&b&m=======",
-            "&aPlaytime:&f %playtime%",
-            "&aTimes Joined:&f %timesjoined%",
-            "&aJoin Date:&f %joindate%",
-            "&b&m============================",
-        });
+        requiredKeys.put("playtime.message",
+                new String[]
+                { "&b&m=======&b&l[%player%]&b&m=======", "&aPlaytime:&f %playtime%", "&aTimes Joined:&f %timesjoined%",
+                        "&aJoin Date:&f %joindate%", "&b&m============================", });
 
         requiredKeys.put("playtime.name.second", "s");
         requiredKeys.put("playtime.name.minute", "min ");
@@ -80,9 +91,10 @@ public class CustomConfig {
         requiredKeys.put("afk-settings.cancel-afk.on-player-chat", true);
         requiredKeys.put("afk-settings.cancel-afk.on-player-interact", true);
 
-        requiredKeys.put("uptime.message", new String[] {
-            "&b&m============================", "&aServer Uptime:&f %serveruptime%", "&b&m============================",
-        });
+        requiredKeys.put("uptime.message",
+                new String[]
+                { "&b&m============================", "&aServer Uptime:&f %serveruptime%",
+                        "&b&m============================", });
 
         requiredKeys.put("top-playtime.header", "&b******&9[&3&lPlayTime Leaderboards&9]&b*****");
         requiredKeys.put("top-playtime.content", "&5%place%) &9&l%player% &9&o- %time%");
@@ -98,44 +110,69 @@ public class CustomConfig {
         requiredKeys.put("messages.player-never-joined", "&cThis player has not joined the server.");
         requiredKeys.put("messages.cooldown", "&cCommand unavailable for %timeleft% seconds!");
 
-        requiredKeys.put(
-                "uuid-lookups.what-does-this-do", "https://github.com/CodedRed-Spigot/PlayTimes/wiki/UUID-LOOKUPS");
+        requiredKeys.put("uuid-lookups.what-does-this-do",
+                "https://github.com/CodedRed-Spigot/PlayTimes/wiki/UUID-LOOKUPS");
         requiredKeys.put("uuid-lookups.type", "default");
 
         boolean changesMade = false;
         for (Map.Entry<String, Object> entry : requiredKeys.entrySet()) {
+
             if (!this.dataConfig.contains(entry.getKey())) {
+
                 this.dataConfig.set(entry.getKey(), entry.getValue());
                 changesMade = true;
+
             }
+
         }
 
         if (changesMade) {
+
             plugin.getLogger().info("Missing configuration keys detected in 'Config.yml'. Adding them now.");
             saveConfig();
+
         }
+
     }
 
     public FileConfiguration getConfig() {
-        if (this.dataConfig == null) reloadConfig();
+
+        if (this.dataConfig == null)
+            reloadConfig();
         return this.dataConfig;
+
     }
 
     public void saveConfig() {
-        if (this.dataConfig == null || this.dataConfigFile == null) return;
+
+        if (this.dataConfig == null || this.dataConfigFile == null)
+            return;
         try {
+
             getConfig().save(this.dataConfigFile);
+
         } catch (IOException ex) {
+
             this.plugin.getLogger().log(Level.SEVERE, ex, () -> "Could not save config to " + this.dataConfigFile);
+
         }
+
     }
 
     public void saveDefaultConfig() {
+
         if (this.dataConfigFile == null) {
+
             this.dataConfigFile = new File(this.plugin.getDataFolder(), name);
+
         }
+
         if (!this.dataConfigFile.exists()) {
+
             this.plugin.saveResource(name, false);
+
         }
+
     }
+
 }

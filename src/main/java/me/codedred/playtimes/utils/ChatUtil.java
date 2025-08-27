@@ -10,14 +10,13 @@ public class ChatUtil {
     private static final DataManager DATA_MANAGER = DataManager.getInstance();
 
     public enum ChatTypes {
-        NO_PERMISSION,
-        PLAYER_NOT_FOUND,
-        PLAYER_NEVER_PLAYED,
+        NO_PERMISSION, PLAYER_NOT_FOUND, PLAYER_NEVER_PLAYED,
     }
 
     public static void errno(CommandSender sender, ChatTypes type) {
 
         switch (type) {
+
             case NO_PERMISSION:
                 sender.sendMessage(format(DATA_MANAGER.getConfig().getString("messages.noPermission")));
                 break;
@@ -28,16 +27,21 @@ public class ChatUtil {
                 sender.sendMessage(
                         formatWithPrefix(DATA_MANAGER.getConfig().getString("messages.player-never-joined")));
                 break;
+
         }
+
     }
 
     public static TextComponent format(String msg) {
 
         return UtilitiesOG.trueogColorize(msg);
+
     }
 
     public static TextComponent formatWithPrefix(String msg) {
 
         return UtilitiesOG.trueogColorize(DATA_MANAGER.getConfig().getString("prefix") + msg);
+
     }
+
 }

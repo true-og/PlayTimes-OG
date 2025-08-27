@@ -7,12 +7,15 @@ public class NoDaysNoSeconds implements Timings {
 
     @Override
     public String buildFormat(long time) {
-        if (time < 60) return (time + (time == 1 ? TimeConstants.getSeconds() : TimeConstants.getSecond()));
+
+        if (time < 60)
+            return (time + (time == 1 ? TimeConstants.getSeconds() : TimeConstants.getSecond()));
 
         int minutes = (int) (time / 60);
 
         // Time less than 1 hour
-        if (minutes < 60) return (minutes + (minutes == 1 ? TimeConstants.getMinute() : TimeConstants.getMinutes()));
+        if (minutes < 60)
+            return (minutes + (minutes == 1 ? TimeConstants.getMinute() : TimeConstants.getMinutes()));
 
         String format;
 
@@ -21,8 +24,11 @@ public class NoDaysNoSeconds implements Timings {
         int inMins = 60 * hours;
         int left = minutes - inMins;
 
-        if (left >= 1) format = format + left + (left == 1 ? TimeConstants.getMinute() : TimeConstants.getMinutes());
+        if (left >= 1)
+            format = format + left + (left == 1 ? TimeConstants.getMinute() : TimeConstants.getMinutes());
 
         return format;
+
     }
+
 }
