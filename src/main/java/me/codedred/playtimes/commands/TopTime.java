@@ -1,8 +1,11 @@
 package me.codedred.playtimes.commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import me.codedred.playtimes.data.DataManager;
 import me.codedred.playtimes.models.Leaderboard;
 import me.codedred.playtimes.statistics.StatManager;
@@ -13,6 +16,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 public class TopTime implements CommandExecutor {
@@ -54,37 +58,69 @@ public class TopTime implements CommandExecutor {
       );
     }
 
-    Leaderboard board = new Leaderboard();
-    Map<String, Integer> map = board.getTopTen();
+    generateAndSendLeaderboard(sender);
+    return true;
+  }
 
-    if (map.isEmpty()) {
-      sender.sendMessage(
-        ChatUtil.format("&cRejoin the server to fill the leaderboard!")
-      );
-      return true;
-    }
+  private void generateAndSendLeaderboard(CommandSender sender) {
+    CompletableFuture.supplyAsync(() -> {
+      Leaderboard board = new Leaderboard();
+      Map<String, Integer> map = board.getTopTen();
+      
+      if (map.isEmpty()) {
+        return null;
+      }
 
+      return generateLeaderboardMessages(map, sender);
+    }).thenAccept(messages -> {
+      Bukkit.getScheduler().runTask(getPlugin(), () -> {
+        if (messages == null) {
+          sender.sendMessage(
+            ChatUtil.format("&cRejoin the server to fill the leaderboard!")
+          );
+          return;
+        }
+
+        for (String message : messages) {
+          sender.sendMessage(message);
+        }
+      });
+    }).exceptionally(throwable -> {
+      throwable.printStackTrace();
+      Bukkit.getScheduler().runTask(getPlugin(), () -> {
+        sender.sendMessage(ChatUtil.format("&cError generating leaderboard!"));
+      });
+      return null;
+    });
+  }
+
+  private List<String> generateLeaderboardMessages(Map<String, Integer> map, CommandSender sender) {
+    List<String> messages = new ArrayList<>();
+    DataManager data = DataManager.getInstance();
     StatManager statManager = StatManager.getInstance();
     TimeManager timeManager = TimeManager.getInstance();
+
     String header = ChatUtil.format(
       data.getConfig().getString("top-playtime.header")
     );
     String footer = ChatUtil.format(
       data.getConfig().getString("top-playtime.footer")
     );
-    String content = data.getConfig().getString("top-playtime.content");
+    String contentTemplate = data.getConfig().getString("top-playtime.content");
 
-    if (ServerUtils.hasPAPI()) {
+    if (ServerUtils.hasPAPI() && sender instanceof Player) {
       header = PAPIHolders.getHolders((Player) sender, header);
       footer = PAPIHolders.getHolders((Player) sender, footer);
     }
 
-    sender.sendMessage(header);
+    messages.add(header);
 
-    for (int i = 0; i < map.size(); i++) {
-      UUID uuid = UUID.fromString(map.keySet().toArray()[i].toString());
+    int place = 1;
+    for (Map.Entry<String, Integer> entry : map.entrySet()) {
+      UUID uuid = UUID.fromString(entry.getKey());
       org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
+      String content = contentTemplate;
       if (ServerUtils.hasPAPI()) {
         content = PAPIHolders.getHolders(offlinePlayer, content);
       }
@@ -96,10 +132,7 @@ public class TopTime implements CommandExecutor {
       String offlinePlayerName = offlinePlayer.getName() != null
         ? offlinePlayer.getName()
         : defaultPlayerName;
-      String place = String.valueOf(i + 1);
-      String time = timeManager.buildFormat(
-        map.get(offlinePlayer.getUniqueId().toString()) / 20
-      );
+      String time = timeManager.buildFormat(entry.getValue() / 20);
       String joinDate = statManager.getJoinDate(uuid) != null
         ? statManager.getJoinDate(uuid)
         : defaultJoinDate;
@@ -110,16 +143,19 @@ public class TopTime implements CommandExecutor {
 
       String formattedContent = content
         .replace("%player%", offlinePlayerName)
-        .replace("%place%", place)
+        .replace("%place%", String.valueOf(place))
         .replace("%time%", time)
         .replace("%joindate%", joinDate);
 
-      sender.sendMessage(ChatUtil.format(formattedContent));
-
-      content = data.getConfig().getString("top-playtime.content");
+      messages.add(ChatUtil.format(formattedContent));
+      place++;
     }
 
-    sender.sendMessage(footer);
-    return true;
+    messages.add(footer);
+    return messages;
+  }
+
+  private Plugin getPlugin() {
+    return Bukkit.getPluginManager().getPlugin("PlayTimes");
   }
 }

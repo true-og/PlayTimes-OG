@@ -1,6 +1,7 @@
 package me.codedred.playtimes.models;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import me.codedred.playtimes.afk.AFKManager;
 import me.codedred.playtimes.data.DataManager;
 import me.codedred.playtimes.statistics.StatManager;
@@ -9,6 +10,10 @@ import me.codedred.playtimes.statistics.StatisticType;
 public class Leaderboard {
 
   final String LEADERBOARD = "leaderboard";
+  
+  private static final Map<String, Integer> cachedLeaderboard = java.util.Collections.synchronizedMap(new LinkedHashMap<>());
+  private static long lastCacheUpdate = 0;
+  private static final long CACHE_DURATION = 30000; // 30 seconds
 
   /**
    * Grabs the uuids from the data file, sorts them, then removes redundant uuids and updates the top 10
@@ -16,23 +21,50 @@ public class Leaderboard {
    * @return listing of top 10 players
    */
   public Map<String, Integer> getTopTen() {
-    Map<String, Integer> topTen = new LinkedHashMap<>();
+    long currentTime = System.currentTimeMillis();
+    
+    if (currentTime - lastCacheUpdate < CACHE_DURATION && !cachedLeaderboard.isEmpty()) {
+      return new LinkedHashMap<>(cachedLeaderboard);
+    }
+    
+    Map<String, Integer> topTen = generateTopTen();
+    
+    cachedLeaderboard.clear();
+    cachedLeaderboard.putAll(topTen);
+    lastCacheUpdate = currentTime;
+    
+    return topTen;
+  }
+  
+  /**
+   * Forces cache invalidation and regenerates the leaderboard
+   */
+  public static void invalidateCache() {
+    lastCacheUpdate = 0;
+    cachedLeaderboard.clear();
+  }
+  
+  private Map<String, Integer> generateTopTen() {
+    Map<String, Integer> allUsers = new LinkedHashMap<>();
     DataManager data = DataManager.getInstance();
     if (!data.getData().contains("leaderboard")) {
-      return topTen;
+      return allUsers;
     }
+    
     for (String key : data
       .getData()
       .getConfigurationSection(LEADERBOARD)
       .getKeys(false)) {
-      topTen.put(
+      allUsers.put(
         key,
         Integer.valueOf(data.getData().getString(LEADERBOARD + "." + key))
       );
     }
 
-    List<Map.Entry<String, Integer>> list = new LinkedList<>(topTen.entrySet());
-    list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+    Map<String, Integer> updatedUsers = updateAllUserTimes(allUsers);
+    
+    List<Map.Entry<String, Integer>> list = new ArrayList<>(updatedUsers.entrySet());
+    list.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
 
     if (list.size() > 20) {
       List<Map.Entry<String, Integer>> delList = list.subList(20, list.size());
@@ -41,33 +73,32 @@ public class Leaderboard {
         data.getData().set(LEADERBOARD + "." + key.getKey(), null);
       }
       data.saveData();
+      
+      list = list.subList(0, 20);
     }
 
-    if (list.size() > 9) {
-      list = list.subList(0, 10);
-    }
-
-    topTen.clear();
-
-    for (Map.Entry<String, Integer> entry : list) {
+    Map<String, Integer> topTen = new LinkedHashMap<>();
+    int count = Math.min(list.size(), 10);
+    for (int i = 0; i < count; i++) {
+      Map.Entry<String, Integer> entry = list.get(i);
       topTen.put(entry.getKey(), entry.getValue());
     }
 
-    updateTimes(topTen);
     return topTen;
   }
 
   /**
-   * Updates the top ten times by querying the latest times from the StatManager and sorting the list.
+   * Updates all users' times by querying the latest times from the StatManager.
    *
-   * @param topTen the current leaderboard, with UUIDs and their corresponding time
+   * @param allUsers all users with their cached playtime data
+   * @return updated map with current playtime data
    */
-  private void updateTimes(Map<String, Integer> topTen) {
+  private Map<String, Integer> updateAllUserTimes(Map<String, Integer> allUsers) {
     StatManager statManager = StatManager.getInstance();
     DataManager dataManager = DataManager.getInstance();
-    List<Map.Entry<String, Integer>> list = new ArrayList<>(topTen.entrySet());
+    Map<String, Integer> updatedUsers = new LinkedHashMap<>();
 
-    for (Map.Entry<String, Integer> entry : list) {
+    for (Map.Entry<String, Integer> entry : allUsers.entrySet()) {
       String uuid = entry.getKey();
       int latestTime = (int) statManager.getPlayerStat(
         UUID.fromString(uuid),
@@ -84,17 +115,9 @@ public class Leaderboard {
           AFKManager.getInstance().getAFKTime(UUID.fromString(uuid)) * 20;
       }
 
-      topTen.put(uuid, latestTime);
+      updatedUsers.put(uuid, latestTime);
     }
 
-    list = new ArrayList<>(topTen.entrySet());
-    list.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
-
-    topTen.clear();
-
-    for (int i = 0; i < Math.min(list.size(), 10); i++) {
-      Map.Entry<String, Integer> entry = list.get(i);
-      topTen.put(entry.getKey(), entry.getValue());
-    }
+    return updatedUsers;
   }
 }
