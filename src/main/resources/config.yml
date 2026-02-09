@@ -17,7 +17,7 @@ playtime:
   ## For database placeholders, visit: https://github.com/CodedRed-Spigot/PlayTimes/wiki/Bungee-Support
   ## PlaceholderAPI placeholders are also compatible.
   message:
-    - "&b&m=======&b&l[%player%]&b&m======="
+    - "&b&m=======&r&b&l[%player%]&b&m======="
     - "&aPlay Time:&e %playtime%"
     - "&aTimes Joined:&e %timesjoined%"
     - "&aJoin Date:&e %joindate%"
