@@ -2,12 +2,12 @@
 # For assistance, please submit inquiries here: https://github.com/CodedRed-Spigot/PlayTimes/issues
 
 # The 'prefix' configures the introductory text for 'player-not-found' and 'player-never-joined' notifications.
-prefix: "&7[&b&lPlayTimes&7]"
+prefix: "&7[&9PlayTimes&f-&4OG&7]"
 
 # Placeholder API Configuration
 # Activate this only if using PlaceholderAPI with PlayTimes.
 # To integrate PlayTimes placeholders into other plugins, simply install PlaceholderAPI; integration occurs seamlessly.
-use-papi-placeholders: false
+use-papi-placeholders: true
 
 # PlayTimes Formatting and Message Customization
 # 'playtime.name' defines time unit labels. For formatting guidance, refer to our Spigot plugin page.
@@ -18,9 +18,9 @@ playtime:
   ## PlaceholderAPI placeholders are also compatible.
   message:
     - "&b&m=======&b&l[%player%]&b&m======="
-    - "&aPlaytime:&f %playtime%"
-    - "&aTimes Joined:&f %timesjoined%"
-    - "&aJoin Date:&f %joindate%"
+    - "&aPlay Time:&e %playtime%"
+    - "&aTimes Joined:&e %timesjoined%"
+    - "&aJoin Date:&e %joindate%"
     - "&b&m============================"
   name:
     second: "s"
@@ -39,20 +39,20 @@ playtime:
   show-seconds: true
   show-days: true
   ## 'round-numbers' - Rounds off the playtime to whole numbers when 'only-hours' is true.
-  round-numbers: true
+  round-numbers: false
 
 # AFK Tracker Configuration
 # NOTE: When enabled, this will remove afk time from %playtime% placeholder
 afk-settings:
-  enabled: true
+  enabled: false
 
   ## Time in minutes after which a player is considered AFK.
   threshold: 5
 
   ## Notifications settings for AFK status changes.
   broadcast-afk:
-    on-enter-afk: true
-    on-exit-afk: true
+    on-enter-afk: false
+    on-exit-afk: false
 
   # Message to send to the player when they are marked as AFK.
   on-enter-afk-message: "&eYou are now marked as AFK."
@@ -67,32 +67,32 @@ afk-settings:
 # /Uptime Command Configuration - Use '%serveruptime%' to display server uptime.
 uptime:
   message:
-    - "&b&m============================"
-    - "&aServer Uptime:&f %serveruptime%"
-    - "&b&m============================"
+    - "&b============================"
+    - "&6Server Uptime: &a%serveruptime%"
+    - "&b============================"
 
 # /toppt Command Settings
 ## Standard Placeholders:
 ## %player%, %place%, %time%, %joindate%
 ## PlaceholderAPI placeholders are also supported.
 top-playtime:
-  header: "&b******&9[&3&lPlayTime Leaderboards&9]&b*****"
+  header: "&B-----&r[&aTrue&cOG&r] &B&lPlay Time Leaderboards&B-----"
   content: "&5%place%) &9&l%player% &9&o- %time%"
-  footer: "&b****************************************"
+  footer: "&B-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
   enable-cooldown: true
-  cooldown-seconds: 60
+  cooldown-seconds: 20
   track-rawtime: false
 
 # 'date-format' - Customize this to change the format of join dates.
 # Explore more formatting options at: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
-date-format: "MM/dd/yyyy"
+date-format: "dd/MM/yyyy"
 
 # Customizable Built-In Messages
 messages:
-  noPermission: "&cYou cannot run this command."
-  player-not-found: "&cUnable to locate player."
-  player-never-joined: "&cThis player has not joined the server."
-  cooldown: "&cCommand unavailable for %timeleft% seconds!"
+  noPermission: "&cERROR: You do not have permission to run run that command!"
+  player-not-found: "&cERROR: Player not found!"
+  player-never-joined: "&cERROR: That player has never joined &aTrue&cOG &eNetwork&c!"
+  cooldown: "&6Warning: You cannot use this command for another &c%timeleft% &6seconds."
 
 # Do not change this unless you know what you're doing!
 # This setting is for servers experiencing issues when looking up offline players.
