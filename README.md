@@ -24,7 +24,7 @@ For detailed instructions and examples on how to use the plugin, refer to the co
 
 ## Roadmap
 
-Check out the [open issues](https://github.com/NotAlexNoyle/PlayTimes/issues) for a list of proposed features and known bugs.
+Check out the [open issues](https://git.trueog.net/trueog/PlayTimes-OG/issues) for a list of proposed features and known bugs.
 
 ## License
 
